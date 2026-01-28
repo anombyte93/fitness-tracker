@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #000000;
+            --foreground: #ffffff;
+            --card: #111111;
+            --card-hover: #1a1a1a;
+            --border: #333333;
+            --primary: #ffffff;
+            --primary-hover: #e0e0e0;
+            --secondary: #666666;
+            --accent: #0070f3;
+            --success: #00d084;
+            --warning: #f5a623;
+            --danger: #e00;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(180deg, #fff 0%, #999 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: #444;
+            background: var(--card-hover);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .measurements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .measurement-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .measurement-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .measurement-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .pr-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--success) 0%, #00a86b 100%);
+            color: #000;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+        }
+
+        .list-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-label {
+            color: var(--secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .list-value {
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .highlight {
+            color: var(--accent);
+        }
+
+        .success { color: var(--success); }
+        .warning { color: var(--warning); }
+        .danger { color: var(--danger); }
+
+        .macros-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .macros-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .macro-item {
+            text-align: center;
+        }
+
+        .macro-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .macro-label {
+            font-size: 0.75rem;
+            color: var(--secondary);
+        }
+
+        .status-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .status-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 50%, var(--danger) 100%);
+            border-radius: 2px;
+        }
+
+        .flag-box {
+            background: rgba(245, 166, 35, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .flag-box-title {
+            color: var(--warning);
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(180deg, #fff 0%, #999 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fitness Tracker</h1>
+            <p class="subtitle">Weekly Progress Dashboard</p>
+        </header>
+
+        <!-- Measurements Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                    <line x1="16" y1="8" x2="2" y2="22"></line>
+                    <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                </svg>
+                Body Measurements
+            </h2>
+            <div class="measurements-grid">
+                <div class="measurement-item">
+                    <div class="measurement-label">Bodyweight</div>
+                    <div class="measurement-value">104.5 kg</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Chest</div>
+                    <div class="measurement-value">112 cm</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Belly Button</div>
+                    <div class="measurement-value">90 cm</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Waist</div>
+                    <div class="measurement-value">92.1 cm</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Hips / Glutes</div>
+                    <div class="measurement-value">108 cm</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Right Thigh</div>
+                    <div class="measurement-value">64 cm</div>
+                </div>
+                <div class="measurement-item">
+                    <div class="measurement-label">Avg Steps</div>
+                    <div class="measurement-value warning">2,688<span style="font-size: 0.875rem; color: var(--secondary);">/day</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Training Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 5v14M18 5v14M2 12h20"></path>
+                </svg>
+                Training Overview
+            </h2>
+
+            <div class="list-item">
+                <div class="list-label">Overall Performance</div>
+                <div class="list-value">Training was incredibly hard. Accumulated fatigue was <span class="danger">very high</span> — felt completely ruined by the workload, despite strong outcomes.</div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Top Lifts / PRs</div>
+                <div class="list-value">
+                    <div>Squat: <span class="success">182.5 kg × 3</span> <span class="pr-badge">NEW PR</span></div>
+                    <div style="margin-top: 0.25rem;">Deadlift: <span class="success">262.5 kg × 1</span> <span class="pr-badge">NEW PR</span></div>
+                    <div style="margin-top: 0.25rem;">Bench: 100 kg × 8 <span class="warning">(capped due to tendon pain)</span></div>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Workout Completion</div>
+                <div class="list-value">3 sessions completed • Only three main lifts total due to fatigue</div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Exercise Difficulty</div>
+                <div class="list-value">
+                    <div>Hardest (effort): Deadlifts — extremely systemically fatiguing</div>
+                    <div style="margin-top: 0.25rem;">Hardest (mental): Bench — tendon pain made it psychologically taxing</div>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Equipment & Prep</div>
+                <div class="list-value">
+                    ✓ Knee wraps used for squats — <span class="success">felt WAY BETTER, 0 pain</span><br>
+                    ✓ Warm-ups & stretching completed before bench
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Corrective Actions</div>
+                <div class="list-value">
+                    <span class="success">✓</span> Deloaded chest day at home (Tuesday) — felt good<br>
+                    <span class="success">✓</span> Restarted 30-minute morning walks daily
+                </div>
+            </div>
+        </section>
+
+        <!-- Nutrition Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
+                </svg>
+                Nutrition
+            </h2>
+
+            <div class="list-item">
+                <div class="list-label">Energy Balance</div>
+                <div class="list-value">
+                    <div>Average: <span class="highlight">~2,728 kcal/day</span></div>
+                    <div class="status-bar">
+                        <div class="status-fill" style="width: 75%; background: var(--success);"></div>
+                    </div>
+                    <div style="font-size: 0.875rem; color: var(--secondary); margin-top: 0.5rem;">~950 kcal weekly deficit relative to expenditure</div>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Macros (Weekly Average)</div>
+                <div class="macros-grid">
+                    <div class="macro-item">
+                        <div class="macro-value">203g</div>
+                        <div class="macro-label">Protein</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="macro-value">279g</div>
+                        <div class="macro-label">Carbs</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="macro-value">83g</div>
+                        <div class="macro-label">Fat</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="macro-value warning">22g</div>
+                        <div class="macro-label">Fiber</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Appetite & Energy</div>
+                <div class="list-value">
+                    <span class="warning">Appetite extremely high</span> • Persistent hunger<br>
+                    <span class="danger">Energy crashes all day</span> • No clear "good" energy window
+                </div>
+            </div>
+        </section>
+
+        <!-- Health Section -->
+        <section class="card">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+                Health & Well-Being
+            </h2>
+
+            <div class="list-item">
+                <div class="list-label">Stress Level</div>
+                <div class="list-value">
+                    <span class="danger">8/10</span> during the week (work-related)<br>
+                    <span class="success">✓ Stress has begun to ease now</span>
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Sleep</div>
+                <div class="list-value">
+                    Average: <span class="warning">~6 hours/night</span><br>
+                    <span class="danger">Insufficient</span> • Sleep debt contributing to fatigue & mood instability
+                </div>
+            </div>
+
+            <div class="list-item">
+                <div class="list-label">Mood</div>
+                <div class="list-value"><span class="warning">Very variable</span> — fluctuating day to day</div>
+            </div>
+
+            <div class="flag-box">
+                <div class="flag-box-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Key Observations
+                </div>
+                <div style="font-size: 0.875rem;">
+                    • PRs achieved <span class="highlight">under high fatigue + low recovery</span><br>
+                    • Low step count likely compounded stress and energy crashes<br>
+                    • Large deficit + poor sleep align with: tendon irritation, mood volatility, all-day fatigue<br>
+                    • <span class="success">Deload and walking are appropriate corrective steps</span>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Track your progress. Crush your goals.</p>
+        </footer>
+    </div>
+</body>
+</html>
